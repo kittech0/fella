@@ -1,30 +1,28 @@
-# flake.nix
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    rust-overlay.url = "github:oxalica/rust-overlay";
   };
 
-  outputs = { nixpkgs, ... }:
-    let
-      system = "x86_64-linux";
-      #       ↑ Swap it for your system if needed
-      #       "aarch64-linux" / "x86_64-darwin" / "aarch64-darwin"
-      pkgs = nixpkgs.legacyPackages.${system};
-    in
-    {
-      devShells.${system}.default = pkgs.mkShell {
-        packages = with pkgs; [
-          cargo
-          rustc
-          rust-analyzer
-          rustfmt
-          pkg-config
-          openssl
-        ];
-
-        env = {
-          RUST_BACKTRACE = "full";
-        };
-      };
+  outputs = {
+    self,
+    nixpkgs,
+    rust-overlay,
+  }: let
+    system = "x86_64-linux";
+    pkgs = import nixpkgs {
+      inherit system;
+      overlays = [rust-overlay.overlays.default];
     };
+    toolchain = pkgs.rust-bin.fromRustupToolchainFile ./toolchain.toml;
+  in {
+    devShells.${system}.default = pkgs.mkShell {
+      packages = with pkgs; [
+        toolchain
+        rust-analyzer-unwrapped
+        nixd
+      ];
+      RUST_SRC_PATH = "${toolchain}/lib/rustlib/src/rust/library";
+    };
+  };
 }
