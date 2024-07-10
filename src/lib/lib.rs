@@ -1,11 +1,14 @@
 #![feature(async_fn_traits)]
-use std::{collections::HashMap, ops::AsyncFn, sync::Arc};
+use std::{collections::HashMap, sync::Arc};
 
-use async_trait::async_trait;
+use serenity::async_trait;
+
 
 pub mod command;
 pub mod error;
+pub mod handler;
 pub mod manager;
+pub mod util;
 pub struct BotManager {
     token: String,
     commands: HashMap<AStr, CommandWrapper>,
@@ -21,6 +24,7 @@ pub struct AStr(Arc<str>);
 
 #[derive(Clone)]
 pub struct CommandWrapper {
+    name: AStr,
     description: AStr,
     command: Arc<dyn Command + Sync + Send>,
 }

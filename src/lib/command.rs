@@ -1,24 +1,15 @@
-use std::{ops::AsyncFn, sync::Arc};
+use std::sync::Arc;
 
-use async_trait::async_trait;
-
-use crate::{AStr, Command, CommandWrapper};
-
-impl From<&str> for AStr {
-    fn from(value: &str) -> Self {
-        Self(Arc::from(value))
-    }
-}
-
-impl AsRef<str> for AStr {
-    fn as_ref(&self) -> &str {
-        self.0.as_ref()
-    }
-}
+use crate::{Command, CommandWrapper};
 
 impl CommandWrapper {
-    pub fn new<D: AsRef<str>, C: Command + Sync + Send + 'static>(description: D, command: C) -> Self {
+    pub fn new<N: AsRef<str>, D: AsRef<str>, C: Command + Sync + Send + 'static>(
+        name: N,
+        description: D,
+        command: C,
+    ) -> Self {
         Self {
+            name: name.as_ref().into(),
             description: description.as_ref().into(),
             command: Arc::from(command),
         }

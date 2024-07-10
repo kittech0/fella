@@ -5,10 +5,8 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.86"
-async-trait = "0.1.80"
 dotenv = "0.15.0"
-phf = { version = "0.11.2", features = ["macros"] }
-phf_codegen = "0.11.2"
+serenity = { version = "0.12.2", features = ["cache", "client", "gateway", "model", "simd_json", "tokio_task_builder"] }
 thiserror = "1.0.61"
 tokio = { version = "1.38.0", features = ["rt-multi-thread", "full"] }
 

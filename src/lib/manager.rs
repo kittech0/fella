@@ -1,6 +1,4 @@
-use std::collections::HashMap;
-
-use crate::{error::BotBuilderError, AStr, BotBuilder, BotManager, Command, CommandWrapper};
+use crate::{error::BotBuilderError, BotBuilder, BotManager, Command, CommandWrapper};
 
 impl BotManager {
     pub fn builder() -> BotBuilder {
@@ -12,7 +10,7 @@ impl BotBuilder {
     fn new() -> Self {
         Self {
             token: Option::None,
-            commands: HashMap::new(),
+            commands: Default::default(),
         }
     }
 
@@ -34,15 +32,11 @@ impl BotBuilder {
         description: D,
         command: C,
     ) -> Self {
+        let command_wrapper = CommandWrapper::new(name, description, command);
         self.commands.insert(
-            name.as_ref().into(),
-            CommandWrapper::new(description, command),
+            command_wrapper.name.clone(),
+            command_wrapper,
         );
-        self
-    }
-
-    pub fn set_commands(mut self, commands: HashMap<AStr, CommandWrapper>) -> Self {
-        self.commands = commands;
         self
     }
 }
